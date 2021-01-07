@@ -1,15 +1,18 @@
 <?php
 namespace Wowe\Recaptcha\Adapters;
 
+use Twig\Extension\AbstractExtension;
+use Twig\Extension\ExtensionInterface;
+use Twig\TwigFunction;
 use \Wowe\Recaptcha\Recaptcha;
 
-class TwigExtension extends \Twig_Extension
+class TwigExtension extends AbstractExtension implements ExtensionInterface
 {
     private $recaptcha;
 
     /**
      * Create a new instance of TwigExtension with the recaptcha engine.
-     * 
+     *
      * @param \Wowe\Recaptcha\Recaptcha $recaptcha An instance of the Recaptcha class.
      */
     public function __construct(Recaptcha $recaptcha)
@@ -17,16 +20,11 @@ class TwigExtension extends \Twig_Extension
         $this->recaptcha = $recaptcha;
     }
 
-    public function getName()
-    {
-        return 'wowe/recaptcha';
-    }
-
     public function getFunctions()
     {
         return [
-            new \Twig_SimpleFunction('recaptchaScript', [$this->recaptcha, 'script'], ['is_safe' => ['html']]),
-            new \Twig_SimpleFunction('recaptchaWidget', [$this->recaptcha, 'widget'], ['is_safe' => ['html']])
+            new TwigFunction('recaptchaScript', [$this->recaptcha, 'script']),
+            new TwigFunction('recaptchaWidget', [$this->recaptcha, 'widget'])
         ];
     }
 }
