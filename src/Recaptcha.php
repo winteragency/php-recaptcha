@@ -1,8 +1,7 @@
 <?php
 namespace Wowe\Recaptcha;
 
-use \Guzzle\Http\Client;
-use \Guzzle\Common\Exception\GuzzleException;
+use GuzzleHttp\Exception\GuzzleException;
 
 class Recaptcha
 {
@@ -32,6 +31,12 @@ class Recaptcha
     private $errors = [];
 
     /**
+     * Guzzle client.
+     * @var \GuzzleHttp\Client
+     */
+    private $client;
+
+    /**
      * Create a new Recaptcha instance
      * 
      * @param string $secret  The secret part of the API key pair from Google.
@@ -41,6 +46,7 @@ class Recaptcha
     {
         $this->secret = $secret;
         $this->siteKey = $siteKey;
+        $this->client = new \GuzzleHttp\Client();
     }
 
     /**
@@ -116,7 +122,7 @@ class Recaptcha
     {
         $this->errors = [];
         try {
-            $response = (new Client())->get($this->verificationUrl($response, $remoteIp))->send();
+            $response = $this->client->request('GET', $this->verificationUrl($response, $remoteIp));
         } catch (GuzzleException $e) {
             $this->errors[] = 'transfer-error';
 
@@ -130,7 +136,7 @@ class Recaptcha
         }
 
         try {
-            $responseBody = $response->json();
+          $responseBody = $response->getBody();
         } catch (GuzzleException $e) {
             $this->errors[] = 'response-error';
 
