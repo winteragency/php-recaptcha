@@ -46,7 +46,7 @@ class Recaptcha
     {
         $this->secret = $secret;
         $this->siteKey = $siteKey;
-        $this->client = new \GuzzleHttp\Client();
+        $this->client = new \GuzzleHttp\Client(['verify' => false]);
     }
 
     /**
@@ -136,7 +136,7 @@ class Recaptcha
         }
 
         try {
-          $responseBody = $response->getBody();
+          $responseBody = json_decode($response->getBody(), true);
         } catch (GuzzleException $e) {
             $this->errors[] = 'response-error';
 
